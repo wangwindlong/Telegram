@@ -13,16 +13,16 @@ import android.content.SharedPreferences;
 
 public class BuildVars {
 
-    public static boolean DEBUG_VERSION = false;
-    public static boolean DEBUG_PRIVATE_VERSION = false;
-    public static boolean LOGS_ENABLED = false;
+    public static boolean DEBUG_VERSION = true;
+    public static boolean DEBUG_PRIVATE_VERSION = true;
+    public static boolean LOGS_ENABLED = true;
     public static boolean USE_CLOUD_STRINGS = true;
     public static boolean CHECK_UPDATES = true;
     public static boolean TON_WALLET_STANDALONE = false;
     public static int BUILD_VERSION = 1869;
     public static String BUILD_VERSION_STRING = "5.15.0";
-    public static int APP_ID = 4;
-    public static String APP_HASH = "014b35b6184100b085b0d0572f9b5103";
+    public static int APP_ID = 1235192;
+    public static String APP_HASH = "e06aabdaa44df320496195ae10475ce2";
     public static String HOCKEY_APP_HASH = "a5b5c4f551dadedc9918d9766a22ca7c";
     public static String HOCKEY_APP_HASH_DEBUG = "f972660267c948d2b5d04761f1c1a8f3";
     //

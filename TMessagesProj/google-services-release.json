@@ -42,43 +42,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:703882048572:android:49ba7adb3e93f40b8a7f39",
-        "android_client_info": {
-          "package_name": "org.telegram.messenger.beta"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "703882048572-5sv37nrsd0brbh70f714nu106sttdddm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "org.telegram.messenger.beta",
-            "certificate_hash": "d365c08934a237578365e34d65fc56168b04476f"
-          }
-        },
-        {
-          "client_id": "703882048572-f31q9seec7vk77g9k4iukbl633nrmcjf.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyA2du28_uuIC-Qmj6McgOHcroUmfjWp5U4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "703882048572-f31q9seec7vk77g9k4iukbl633nrmcjf.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"
