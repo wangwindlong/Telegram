@@ -206,7 +206,7 @@ inline bool factorizeValue(uint64_t what, uint32_t &p, uint32_t &q) {
 
 inline bool check_prime(BIGNUM *p) {
     int result = 0;
-    if (!BN_primality_test(&result, p, BN_prime_checks, bnContext, 0, NULL)) {
+    if (!BN_primality_test(&result, p, 64, bnContext, 0, NULL)) {
         if (LOGS_ENABLED) DEBUG_E("OpenSSL error at BN_primality_test");
         return false;
     }
@@ -864,7 +864,7 @@ void Handshake::processHandshakeResponse(TLObject *message, int64_t messageId) {
                         request->encrypted_message = currentDatacenter->createRequestsData(array, nullptr, connection, true);
                     };
 
-                    authKeyPendingRequestId = ConnectionsManager::getInstance(currentDatacenter->instanceNum).sendRequest(request, [&](TLObject *response, TL_error *error, int32_t networkType) {
+                    authKeyPendingRequestId = ConnectionsManager::getInstance(currentDatacenter->instanceNum).sendRequest(request, [&](TLObject *response, TL_error *error, int32_t networkType, int64_t responseTime) {
                         authKeyPendingMessageId = 0;
                         authKeyPendingRequestId = 0;
                         if (response != nullptr && typeid(*response) == typeid(TL_boolTrue)) {
@@ -980,7 +980,7 @@ void Handshake::loadCdnConfig(Datacenter *datacenter) {
     loadingCdnKeys = true;
     TL_help_getCdnConfig *request = new TL_help_getCdnConfig();
 
-    ConnectionsManager::getInstance(datacenter->instanceNum).sendRequest(request, [&, datacenter](TLObject *response, TL_error *error, int32_t networkType) {
+    ConnectionsManager::getInstance(datacenter->instanceNum).sendRequest(request, [&, datacenter](TLObject *response, TL_error *error, int32_t networkType, int64_t responseTime) {
         if (response != nullptr) {
             TL_cdnConfig *config = (TL_cdnConfig *) response;
             size_t count = config->public_keys.size();

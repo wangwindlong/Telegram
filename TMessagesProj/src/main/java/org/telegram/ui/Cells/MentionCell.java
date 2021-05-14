@@ -76,13 +76,36 @@ public class MentionCell extends LinearLayout {
         }
         avatarDrawable.setInfo(user);
         if (user.photo != null && user.photo.photo_small != null) {
-            imageView.setImage(ImageLocation.getForUser(user, false), "50_50", avatarDrawable, user);
+            imageView.setForUserOrChat(user, avatarDrawable);
         } else {
             imageView.setImageDrawable(avatarDrawable);
         }
         nameTextView.setText(UserObject.getUserName(user));
         if (user.username != null) {
             usernameTextView.setText("@" + user.username);
+        } else {
+            usernameTextView.setText("");
+        }
+        imageView.setVisibility(VISIBLE);
+        usernameTextView.setVisibility(VISIBLE);
+    }
+
+    public void setChat(TLRPC.Chat chat) {
+        if (chat == null) {
+            nameTextView.setText("");
+            usernameTextView.setText("");
+            imageView.setImageDrawable(null);
+            return;
+        }
+        avatarDrawable.setInfo(chat);
+        if (chat.photo != null && chat.photo.photo_small != null) {
+            imageView.setForUserOrChat(chat, avatarDrawable);
+        } else {
+            imageView.setImageDrawable(avatarDrawable);
+        }
+        nameTextView.setText(chat.title);
+        if (chat.username != null) {
+            usernameTextView.setText("@" + chat.username);
         } else {
             usernameTextView.setText("");
         }
@@ -117,7 +140,7 @@ public class MentionCell extends LinearLayout {
             imageView.setVisibility(VISIBLE);
             avatarDrawable.setInfo(user);
             if (user.photo != null && user.photo.photo_small != null) {
-                imageView.setImage(ImageLocation.getForUser(user, false), "50_50", avatarDrawable, user);
+                imageView.setForUserOrChat(user, avatarDrawable);
             } else {
                 imageView.setImageDrawable(avatarDrawable);
             }

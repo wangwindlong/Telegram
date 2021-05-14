@@ -50,6 +50,7 @@ import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 
+import static com.google.zxing.common.detector.MathUtils.distance;
 import static org.telegram.ui.ActionBar.FloatingToolbar.STYLE_THEME;
 import static org.telegram.ui.ActionBar.Theme.key_chat_inTextSelectionHighlight;
 
@@ -120,6 +121,8 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
     private Interpolator interpolator = new OvershootInterpolator();
 
     protected boolean showActionsAsPopupAlways = false;
+
+    int keyboardSize;
 
     private Runnable scrollRunnable = new Runnable() {
         @Override
@@ -408,10 +411,6 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
         return selectionStart >= 0 && selectionEnd >= 0;
     }
 
-    float distance(int x1, int y1, int x2, int y2) {
-        return (float) Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-    }
-
     private ActionBarPopupWindow popupWindow;
     private ActionBarPopupWindow.ActionBarPopupWindowLayout popupLayout;
     private TextView deleteView;
@@ -456,7 +455,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                             }
                             return false;
                         });
-                        popupLayout.setShowedFromBotton(false);
+                        popupLayout.setShownFromBotton(false);
 
                         deleteView = new TextView(textSelectionOverlay.getContext());
                         deleteView.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), 2));
@@ -970,6 +969,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                         showMagnifier(lastX);
                     }
                     break;
+                case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
                     hideMagnifier();
                     movingHandle = false;
@@ -1024,7 +1024,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                         y += layoutBlock.yOffset;
                         x += layoutBlock.xOffset;
 
-                        if (y + yOffset > top && y + yOffset < parentView.getMeasuredHeight()) {
+                        if (y + yOffset > top + keyboardSize && y + yOffset < parentView.getMeasuredHeight()) {
                             if (!layout.isRtlCharAt(selectionEnd)) {
                                 canvas.save();
                                 canvas.translate(x, y);
@@ -1084,7 +1084,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                         y += layoutBlock.yOffset;
                         x += layoutBlock.xOffset;
 
-                        if (y + yOffset > top && y + yOffset < parentView.getMeasuredHeight()) {
+                        if (y + yOffset > top + keyboardSize && y + yOffset < parentView.getMeasuredHeight()) {
                             if (!layout.isRtlCharAt(selectionStart)) {
                                 canvas.save();
                                 canvas.translate(x - handleViewSize, y);
@@ -1493,7 +1493,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                 textArea.set(maybeTextX, maybeTextY,
                         maybeTextX + chatMessageCell.getCaptionLayout().getWidth(),
                         maybeTextY + chatMessageCell.getCaptionLayout().getHeight());
-            } else if (messageObject != null && messageObject.textLayoutBlocks.size() > 0) {
+            } else if (messageObject != null && messageObject.textLayoutBlocks != null && messageObject.textLayoutBlocks.size() > 0) {
                 MessageObject.TextLayoutBlock block = messageObject.textLayoutBlocks.get(messageObject.textLayoutBlocks.size() - 1);
                 textArea.set(
                         maybeTextX, maybeTextY,
@@ -2608,5 +2608,10 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                 lastBottom = bottom;
             }
         }
+    }
+
+    public void setKeyboardSize(int keyboardSize) {
+        this.keyboardSize = keyboardSize;
+        invalidate();
     }
 }

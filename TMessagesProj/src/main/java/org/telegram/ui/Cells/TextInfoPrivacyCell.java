@@ -11,12 +11,14 @@ package org.telegram.ui.Cells;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Canvas;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ public class TextInfoPrivacyCell extends FrameLayout {
 
     private TextView textView;
     private String linkTextColorKey = Theme.key_windowBackgroundWhiteLinkText;
+    private int topPadding = 10;
     private int bottomPadding = 17;
     private int fixedSize;
 
@@ -43,14 +46,25 @@ public class TextInfoPrivacyCell extends FrameLayout {
     public TextInfoPrivacyCell(Context context, int padding) {
         super(context);
 
-        textView = new TextView(context);
+        textView = new TextView(context) {
+            @Override
+            protected void onDraw(Canvas canvas) {
+                onTextDraw();
+                super.onDraw(canvas);
+            }
+        };
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         textView.setGravity(LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT);
         textView.setPadding(0, AndroidUtilities.dp(10), 0, AndroidUtilities.dp(17));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4));
         textView.setLinkTextColor(Theme.getColor(linkTextColorKey));
+        textView.setImportantForAccessibility(IMPORTANT_FOR_ACCESSIBILITY_NO);
         addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, padding, 0, padding, 0));
+    }
+
+    protected void onTextDraw() {
+
     }
 
     public void setLinkTextColorKey(String key) {
@@ -64,6 +78,10 @@ public class TextInfoPrivacyCell extends FrameLayout {
         } else {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         }
+    }
+
+    public void setTopPadding(int topPadding) {
+        this.topPadding = topPadding;
     }
 
     public void setBottomPadding(int value) {
@@ -80,7 +98,7 @@ public class TextInfoPrivacyCell extends FrameLayout {
             if (text == null) {
                 textView.setPadding(0, AndroidUtilities.dp(2), 0, 0);
             } else {
-                textView.setPadding(0, AndroidUtilities.dp(10), 0, AndroidUtilities.dp(bottomPadding));
+                textView.setPadding(0, AndroidUtilities.dp(topPadding), 0, AndroidUtilities.dp(bottomPadding));
             }
             SpannableString spannableString = null;
             if (text != null) {
@@ -120,5 +138,12 @@ public class TextInfoPrivacyCell extends FrameLayout {
         } else {
             textView.setAlpha(value ? 1.0f : 0.5f);
         }
+    }
+
+    @Override
+    public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
+        super.onInitializeAccessibilityNodeInfo(info);
+        info.setClassName(TextView.class.getName());
+        info.setText(text);
     }
 }

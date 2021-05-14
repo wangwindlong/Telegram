@@ -45,12 +45,13 @@ public:
     int64_t getCurrentTimeMillis();
     int64_t getCurrentTimeMonotonicMillis();
     int32_t getCurrentTime();
+    uint32_t getCurrentDatacenterId();
     bool isTestBackend();
     int32_t getTimeDifference();
     int32_t sendRequest(TLObject *object, onCompleteFunc onComplete, onQuickAckFunc onQuickAck, uint32_t flags, uint32_t datacenterId, ConnectionType connetionType, bool immediate);
     int32_t sendRequest(TLObject *object, onCompleteFunc onComplete, onQuickAckFunc onQuickAck, uint32_t flags, uint32_t datacenterId, ConnectionType connetionType, bool immediate, int32_t requestToken);
     void cancelRequest(int32_t token, bool notifyServer);
-    void cleanUp(bool resetKeys);
+    void cleanUp(bool resetKeys, int32_t datacenterId);
     void cancelRequestsForGuid(int32_t guid);
     void bindRequestToGuid(int32_t requestToken, int32_t guid);
     void applyDatacenterAddress(uint32_t datacenterId, std::string ipAddress, uint32_t port);
@@ -61,8 +62,8 @@ public:
     void resumeNetwork(bool partial);
     void pauseNetwork();
     void setNetworkAvailable(bool value, int32_t type, bool slow);
-    void setUseIpv6(bool value);
-    void init(uint32_t version, int32_t layer, int32_t apiId, std::string deviceModel, std::string systemVersion, std::string appVersion, std::string langCode, std::string systemLangCode, std::string configPath, std::string logPath, std::string regId, std::string cFingerprint, int32_t userId, bool isPaused, bool enablePushConnection, bool hasNetwork, int32_t networkType);
+    void setIpStrategy(uint8_t value);
+    void init(uint32_t version, int32_t layer, int32_t apiId, std::string deviceModel, std::string systemVersion, std::string appVersion, std::string langCode, std::string systemLangCode, std::string configPath, std::string logPath, std::string regId, std::string cFingerprint, std::string installerId, std::string packageId, int32_t timezoneOffset, int32_t userId, bool isPaused, bool enablePushConnection, bool hasNetwork, int32_t networkType);
     void setProxySettings(std::string address, uint16_t port, std::string username, std::string password, std::string secret);
     void setLangCode(std::string langCode);
     void setRegId(std::string regId);
@@ -122,7 +123,7 @@ private:
     void onDatacenterHandshakeComplete(Datacenter *datacenter, HandshakeType type, int32_t timeDiff);
     void onDatacenterExportAuthorizationComplete(Datacenter *datacenter);
     int64_t generateMessageId();
-    bool isIpv6Enabled();
+    uint8_t getIpStratagy();
     bool isNetworkAvailable();
 
     void scheduleCheckProxyInternal(ProxyCheckInfo *proxyCheckInfo);
@@ -191,18 +192,21 @@ private:
     int64_t lastOutgoingMessageId = 0;
     bool networkAvailable = true;
     bool networkSlow = false;
-    bool ipv6Enabled = false;
+    uint8_t ipStrategy = USE_IPV4_ONLY;
+    bool lastProtocolIsIpv6 = false;
+    bool lastProtocolUsefullData = false;
     std::vector<ConnectionSocket *> activeConnections;
     std::vector<ConnectionSocket *> activeConnectionsCopy;
     int epolFd;
     int eventFd;
-    int *pipeFd;
+    int *pipeFd = nullptr;
     NativeByteBuffer *networkBuffer;
 
     requestsList requestsQueue;
     requestsList runningRequests;
     std::vector<uint32_t> requestingSaltsForDc;
     int32_t lastPingId = 0;
+    int64_t lastInvokeAfterMessageId = 0;
 
     int32_t currentNetworkType = NETWORK_TYPE_WIFI;
     uint32_t currentVersion = 1;
@@ -214,6 +218,9 @@ private:
     std::string currentLangCode;
     std::string currentRegId;
     std::string certFingerprint;
+    std::string installer;
+    std::string package;
+    int32_t currentDeviceTimezone = 0;
     std::string currentSystemLangCode;
     std::string currentConfigPath;
     std::string currentLogPath;

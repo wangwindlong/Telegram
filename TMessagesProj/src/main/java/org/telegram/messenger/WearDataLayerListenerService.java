@@ -96,7 +96,7 @@ public class WearDataLayerListenerService extends WearableListenerService {
 							};
 							AndroidUtilities.runOnUIThread(() -> {
 								NotificationCenter.getInstance(currentAccount).addObserver(listener, NotificationCenter.fileDidLoad);
-								FileLoader.getInstance(currentAccount).loadFile(ImageLocation.getForUser(user, false), user, null, 1, 1);
+								FileLoader.getInstance(currentAccount).loadFile(ImageLocation.getForUserOrChat(user, ImageLocation.TYPE_SMALL), user, null, 1, 1);
 							});
 							try {
 								barrier.await(10, TimeUnit.SECONDS);
@@ -249,8 +249,8 @@ public class WearDataLayerListenerService extends WearableListenerService {
 					if (dialog_id == 0 || max_id == 0 || currentAccount == -1) {
 						return;
 					}
-					SendMessagesHelper.getInstance(currentAccount).sendMessage(text.toString(), dialog_id, null, null, true, null, null, null, true, 0);
-					MessagesController.getInstance(currentAccount).markDialogAsRead(dialog_id, max_id, max_id, 0, false, 0, true, 0);
+					SendMessagesHelper.getInstance(currentAccount).sendMessage(text.toString(), dialog_id, null, null, null, true, null, null, null, true, 0);
+					MessagesController.getInstance(currentAccount).markDialogAsRead(dialog_id, max_id, max_id, 0, false, 0, 0, true, 0);
 				} catch (Exception x) {
 					if (BuildVars.LOGS_ENABLED)
 						FileLog.e(x);

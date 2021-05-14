@@ -9,12 +9,11 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include "image.h"
-#include "libtgvoip/client/android/tg_voip_jni.h"
 
 int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env);
 int videoOnJNILoad(JavaVM *vm, JNIEnv *env);
-//int tonLibOnLoad(JavaVM *vm, JNIEnv *env);
+int imageOnJNILoad(JavaVM *vm, JNIEnv *env);
+int tgvoipOnJNILoad(JavaVM *vm, JNIEnv *env);
 
 jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 	JNIEnv *env = 0;
@@ -23,7 +22,7 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
 	if ((*vm)->GetEnv(vm, (void **) &env, JNI_VERSION_1_6) != JNI_OK) {
 		return -1;
 	}
-    
+
     if (imageOnJNILoad(vm, env) != JNI_TRUE) {
         return -1;
     }
@@ -35,10 +34,9 @@ jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     if (registerNativeTgNetFunctions(vm, env) != JNI_TRUE) {
         return -1;
     }
-    
-    //tonLibOnLoad(vm, env);
-    tgvoipRegisterNatives(env);
-    
+
+    tgvoipOnJNILoad(vm, env);
+
 	return JNI_VERSION_1_6;
 }
 

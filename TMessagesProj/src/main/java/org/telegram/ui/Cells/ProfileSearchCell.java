@@ -357,6 +357,9 @@ public class ProfileSearchCell extends BaseCell {
             countLayout = null;
         }
 
+        if (nameWidth < 0) {
+            nameWidth = 0;
+        }
         CharSequence nameStringFinal = TextUtils.ellipsize(nameString, currentNamePaint, nameWidth - AndroidUtilities.dp(12), TextUtils.TruncateAt.END);
         nameLayout = new StaticLayout(nameStringFinal, currentNamePaint, nameWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
 
@@ -386,9 +389,9 @@ public class ProfileSearchCell extends BaseCell {
                     }
                 }
             }
-            if (savedMessages) {
+            if (savedMessages || UserObject.isReplyUser(user)) {
                 statusString = null;
-                nameTop = AndroidUtilities.dp(19);
+                nameTop = AndroidUtilities.dp(20);
             }
         } else {
             if (chat != null) {
@@ -488,21 +491,24 @@ public class ProfileSearchCell extends BaseCell {
         TLRPC.FileLocation photo = null;
         if (user != null) {
             avatarDrawable.setInfo(user);
-            if (savedMessages) {
+            if (UserObject.isReplyUser(user)) {
+                avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
+                avatarImage.setImage(null, null, avatarDrawable, null, null, 0);
+            } else if (savedMessages) {
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 avatarImage.setImage(null, null, avatarDrawable, null, null, 0);
             } else {
                 if (user.photo != null) {
                     photo = user.photo.photo_small;
                 }
-                avatarImage.setImage(ImageLocation.getForUser(user, false), "50_50", avatarDrawable, null, user, 0);
+                avatarImage.setForUserOrChat(user, avatarDrawable);
             }
         } else if (chat != null) {
             if (chat.photo != null) {
                 photo = chat.photo.photo_small;
             }
             avatarDrawable.setInfo(chat);
-            avatarImage.setImage(ImageLocation.getForChat(chat, false), "50_50", avatarDrawable, null, chat, 0);
+            avatarImage.setForUserOrChat(chat, avatarDrawable);
         } else {
             avatarDrawable.setInfo(0, null, null);
             avatarImage.setImage(null, null, avatarDrawable, null, null, 0);

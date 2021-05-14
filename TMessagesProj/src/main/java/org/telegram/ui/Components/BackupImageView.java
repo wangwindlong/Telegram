@@ -20,6 +20,7 @@ import android.view.View;
 import org.telegram.messenger.ImageLocation;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.messenger.SecureDocument;
+import org.telegram.tgnet.TLObject;
 
 public class BackupImageView extends View {
 
@@ -48,6 +49,10 @@ public class BackupImageView extends View {
         setImage(imageLocation, imageFilter, null, null, thumb, null, null, 0, parentObject);
     }
 
+    public void setImage(ImageLocation mediaLocation, String mediaFilter, ImageLocation imageLocation, String imageFilter, Drawable thumb, Object parentObject) {
+        imageReceiver.setImage(mediaLocation, mediaFilter, imageLocation, imageFilter, null, null, thumb, 0, null, parentObject, 1);
+    }
+
     public void setImage(ImageLocation imageLocation, String imageFilter, Bitmap thumb, Object parentObject) {
         setImage(imageLocation, imageFilter, null, null, null, thumb, null, 0, parentObject);
     }
@@ -62,6 +67,22 @@ public class BackupImageView extends View {
             thumb = new BitmapDrawable(null, thumbBitmap);
         }
         imageReceiver.setImage(imageLocation, imageFilter, null, null, thumb, size, null, parentObject, cacheType);
+    }
+
+    public void setForUserOrChat(TLObject object, AvatarDrawable avatarDrawable) {
+        imageReceiver.setForUserOrChat(object, avatarDrawable);
+    }
+
+    public void setForUserOrChat(TLObject object, AvatarDrawable avatarDrawable, Object parent) {
+        imageReceiver.setForUserOrChat(object, avatarDrawable, parent);
+    }
+
+    public void setImageMedia(ImageLocation mediaLocation, String mediaFilter, ImageLocation imageLocation, String imageFilter, Bitmap thumbBitmap, int size, int cacheType, Object parentObject) {
+        Drawable thumb = null;
+        if (thumbBitmap != null) {
+            thumb = new BitmapDrawable(null, thumbBitmap);
+        }
+        imageReceiver.setImage(mediaLocation, mediaFilter, imageLocation, imageFilter, null, null, thumb, size, null, parentObject, cacheType);
     }
 
     public void setImage(ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, int size, Object parentObject) {
@@ -85,6 +106,10 @@ public class BackupImageView extends View {
 
     public void setImage(ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, String ext, int size, int cacheType, Object parentObject) {
         imageReceiver.setImage(imageLocation, imageFilter, thumbLocation, thumbFilter, null, size, ext, parentObject, cacheType);
+    }
+
+    public void setImageMedia(ImageLocation mediaLocation, String mediaFilter, ImageLocation imageLocation, String imageFilter, ImageLocation thumbLocation, String thumbFilter, String ext, int size, int cacheType, Object parentObject) {
+        imageReceiver.setImage(mediaLocation, mediaFilter, imageLocation, imageFilter, thumbLocation, thumbFilter, null, size, ext, parentObject, cacheType);
     }
 
     public void setImageBitmap(Bitmap bitmap) {
@@ -116,6 +141,11 @@ public class BackupImageView extends View {
 
     public void setRoundRadius(int value) {
         imageReceiver.setRoundRadius(value);
+        invalidate();
+    }
+
+    public void setRoundRadius(int tl, int tr, int bl, int br) {
+        imageReceiver.setRoundRadius(tl, tr, bl ,br);
         invalidate();
     }
 

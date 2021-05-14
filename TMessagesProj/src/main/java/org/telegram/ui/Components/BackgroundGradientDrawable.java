@@ -70,6 +70,10 @@ public class BackgroundGradientDrawable extends GradientDrawable {
             return ofDeviceScreen(compressRatio, Orientation.BOTH);
         }
 
+        public static Sizes ofDeviceScreen(Orientation orientation) {
+            return ofDeviceScreen(DEFAULT_COMPRESS_RATIO, orientation);
+        }
+
         public static Sizes ofDeviceScreen(float compressRatio, Orientation orientation) {
             final int width = (int) (AndroidUtilities.displaySize.x * compressRatio);
             final int height = (int) (AndroidUtilities.displaySize.y * compressRatio);
@@ -236,6 +240,9 @@ public class BackgroundGradientDrawable extends GradientDrawable {
 
         for (int i = 0; i < sizesArr.length; i++) {
             final IntSize size = sizesArr[i];
+            if (size.width == 0 || size.height == 0) {
+                continue;
+            }
             final int index = i;
             Utilities.globalQueue.postRunnable(runnables[i] = () -> {
                 Bitmap gradientBitmap = null;
